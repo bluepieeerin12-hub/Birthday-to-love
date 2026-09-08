@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Happy Birthday, Love</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=Jost:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --cream:#fbeee9;
+    --blush:#f7d7df;
+    --rose:#e8a0b4;
+    --rose-deep:#c2496b;
+    --plum:#4a2635;
+    --gold:#cf9a4c;
+    --paper:#fffaf7;
+
+    --pink-1:#ffe4ec;
+    --pink-2:#ffd1de;
+    --pink-3:#ff9fb8;
+    --pink-deep:#e85d84;
+    --lock-gold:#e6b325;
+    --ink:#3a2530;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  html{scroll-behavior:smooth;}
+  html, body{height:100%;}
+  body{
+    font-family:'Jost', sans-serif;
+    color:var(--plum);
+    background:#000;
+    line-height:1.7;
+    overflow:hidden; /* locked while PIN screen is up */
+  }
+  body.unlocked{
+    overflow-x:hidden;
+    overflow-y:auto;
+    height:auto;
+    background:var(--cream);
+  }
+  h1,h2,h3,.serif{
+    font-family:'Cormorant Garamond', serif;
+    font-weight:600;
+    line-height:1.15;
+  }
+  .label{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:15px;
+    letter-spacing:.5px;
+    color:var(--rose-deep);
+    margin-bottom:10px;
+  }
+  section{position:relative; width:100%;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 32px;}
+  img{max-width:100%; display:block;}
+
+  /* ---------- polaroid photo cards ---------- */
+  .photo{
+    background:var(--paper);
+    border-radius:4px;
+    padding:14px 14px 46px 14px;
+    box-shadow:0 18px 40px rgba(74,38,53,.18);
+    display:inline-block;
+  }
+  .photo .frame{
+    aspect-ratio:4/5;
+    border-radius:2px;
+    background:linear-gradient(150deg, var(--blush), var(--rose) 60%, var(--rose-deep));
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden;
+    position:relative;
+  }
+  .photo .frame img{
+    width:100%; height:100%; object-fit:cover;
+    position:absolute; inset:0;
+  }
+  .photo.wide{padding-bottom:14px;}
+  .photo.wide .frame{aspect-ratio:16/10;}
+
+  /* ================= HERO ================= */
+  #hero{
+    height:100vh;
+    min-height:640px;
+    display:flex;
+    align-items:flex-end;
+    background:linear-gradient(180deg, rgba(74,38,53,.15), rgba(30,12,20,.75)), linear-gradient(160deg, var(--rose), var(--rose-deep));
+    color:var(--paper);
+    overflow:hidden;
+  }
+  #hero .frame{position:absolute; inset:0;}
+  #hero .frame img{
+    width:100%; height:100%;
+    object-fit:cover;
+    position:absolute; inset:0;
+  }
+  #hero-content{
+    position:relative;
+    z-index:2;
+    width:100%;
+    padding:0 32px 90px;
+    text-align:center;
+    opacity:0;
+    transform:translateY(24px);
+  }
+  body.unlocked #hero-content{
+    animation:heroIn 1.4s .3s ease forwards;
+  }
+  @keyframes heroIn{ to{opacity:1; transform:translateY(0);} }
+  #hero .label{color:var(--blush); font-size:15px;}
+  #hero h1{ font-size:clamp(40px, 8vw, 84px); letter-spacing:.5px; }
+  #hero .sub{
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:19px;
+    margin-top:10px;
+    color:var(--blush);
+  }
+  .scroll-cue{ margin-top:46px; font-size:11px; letter-spacing:3px; color:rgba(255,255,255,.75); }
+  .scroll-cue::after{
+    content:"";
+    display:block;
+    width:1px; height:34px;
+    background:rgba(255,255,255,.5);
+    margin:10px auto 0;
+    animation:scrollLine 1.8s ease-in-out infinite;
+  }
+  @keyframes scrollLine{
+    0%{transform:scaleY(0); transform-origin:top;}
+    50%{transform:scaleY(1); transform-origin:top;}
+    51%{transform:scaleY(1); transform-origin:bottom;}
+    100%{transform:scaleY(0); transform-origin:bottom;}
+  }
+
+  /* ================= NOTE ================= */
+  #note{ padding:130px 0; background:var(--cream); }
+  #note .wrap{ display:grid; grid-template-columns:0.85fr 1.15fr; gap:70px; align-items:center; }
+  #note .photo{transform:rotate(-4deg);}
+  #note h2{font-size:clamp(34px,4vw,52px);}
+  #note p{ max-width:46ch; color:#6b4453; font-size:16px; margin-top:18px; }
+  #note .signed{
+    margin-top:26px;
+    font-family:'Cormorant Garamond', serif;
+    font-style:italic;
+    font-size:19px;
+    color:var(--rose-deep);
+  }
+
+  /* ================= MOMENTS (film strip) ================= */
+  #moments{ padding:130px 0 60px; background:var(--blush); }
+  #moments .head{ text-align:center; margin-bottom:60px; }
+  #moments h2{font-size:clamp(34px,4vw,52px);}
+  .film-strip{
+    display:flex; gap:0; margin:0 -18px;
+    position:relative;
+  }
+  .film-strip::before{
+    content:""; position:absolute; top:50%; left:0; right:0;
+    height:2px; background:repeating-linear-gradient(to right,
+      var(--gold) 0 6px, transparent 6px 12px);
+    transform:translateY(-50%);
+    z-index:0;
+  }
+  .strip-item{
+    flex:1; min-width:180px; padding:0 18px;
+    display:flex; flex-direction:column; align-items:center; text-align:center;
+    position:relative; z-index:1;
+    /* visible straight away — fade-in on load below */
+    animation: fadeUp .8s .2s both ease;
+  }
+  @keyframes fadeUp {
+    0%   { opacity:0; transform:translateY(30px); }
+    100% { opacity:1; transform:translateY(0); }
+  }
+  .strip-frame{
+    width:100%; aspect-ratio:4/5;
+    border-radius:2px; overflow:hidden;
+    box-shadow:0 10px 28px rgba(74,38,53,.22);
+    display:flex; align-items:center; justify-content:center;
+    background:#FAFAFA; /* safe fallback if image fails to load */
+  }
+  .strip-frame img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .strip-caption{ margin-top:16px; }
+  .strip-date{ font-size:12px; letter-spacing:2px; color:var(--rose-deep); }
+  .strip-desc{ font-size:14px; color:#6b4453; margin-top:8px; max-width:28ch; line-height:1.6; }
+
+  /* ================= GALLERY (photo wall grid) ================= */
+  #gallery{ padding:120px 0 140px; background:var(--cream); text-align:center; }
+  #gallery .head{ margin-bottom:60px; }
+  #gallery h2{ font-size:clamp(34px,4vw,52px); }
+  .photo-wall{
+    display:flex; gap:36px; justify-content:center; flex-wrap:wrap;
+  }
+  .wall-item{
+    width:320px; animation: fadeUp .8s .3s both ease;
+  }
+  .wall-item .frame{
+    width:100%; aspect-ratio:1/1;
+    border-radius:3px; overflow:hidden;
+    box-shadow:0 12px 32px rgba(74,38,53,.18);
+    display:flex; align-items:center; justify-content:center;
+    background:#FAFAFA;
+  }
+  .wall-item .frame img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .wall-caption{
+    font-family:'Cormorant Garamond', serif; font-style:italic;
+    font-size:15px; color:var(--rose-deep); margin-top:14px;
+  }
+  @media (max-width:700px){
+    .film-strip{ flex-direction:column; }
+    .film-strip::before{ top:0; bottom:0; left:24px; width:2px; height:auto; }
+    .strip-item{ min-width:auto; width:100%; padding:0 18px 40px; }
+    .photo-wall{ flex-direction:column; align-items:center; }
+    .wall-item{ width:100%; max-width:360px; }
+  }
+
+  /* ================= CLOSING ================= */
+  #closing{
+    min-height:80vh; display:flex; align-items:center; justify-content:center; text-align:center;
+    background:linear-gradient(160deg, var(--rose-deep), #7a2b45 70%);
+    color:var(--paper); padding:120px 32px;
+  }
+  #closing .inner{max-width:600px;}
+  #closing .label{color:var(--blush);}
+  #closing h2{ font-size:clamp(30px,5vw,46px); font-style:italic; }
+  #closing p{ margin-top:22px; color:var(--blush); font-size:16px; }
+  #closing .heart{ font-size:26px; margin-top:36px; color:var(--blush); opacity:.9; }
+  #closing .date{ margin-top:10px; font-size:12px; letter-spacing:3px; color:rgba(255,255,255,.6); }
+
+  ::selection{background:var(--rose-deep); color:#fff;}
+
+  /* ================= LOCK SCREEN (overlay) ================= */
+  #lockScreen{
+    position:fixed; inset:0;
+    display:flex; flex-direction:column; align-items:center; justify-content:flex-start;
+    padding-top:14vh;
+    background:linear-gradient(160deg, var(--pink-1) 0%, var(--pink-2) 45%, #f3e3ff 100%);
+    transition:opacity 1s ease, filter 1s ease;
+    z-index:100;
+    font-family:'Georgia','Times New Roman',serif;
+  }
+  #lockScreen.fading{ opacity:0; filter:blur(6px); pointer-events:none; }
+
+  .eyebrow{
+    letter-spacing:3px; font-size:11px; color:var(--pink-deep); text-transform:uppercase;
+    font-family:Arial, sans-serif; margin-bottom:6px; opacity:.85;
+  }
+  h1.title{ font-size:28px; color:var(--ink); margin:0 0 6px 0; font-weight:600; }
+  .subtitle{ font-family:Arial, sans-serif; font-size:12.5px; color:#8a6b78; margin:0 0 2px 0; }
+  .hint{
+    font-family:Arial, sans-serif; font-size:11px; color:#c58aa0; text-decoration:underline;
+    cursor:pointer; margin-bottom:28px; background:none; border:none;
+  }
+  .lock-wrap{ width:90px; height:90px; margin-bottom:18px; position:relative; }
+  .shackle{
+    width:44px; height:44px; border:9px solid var(--lock-gold); border-bottom:none;
+    border-radius:44px 44px 0 0; position:absolute; top:0; left:23px; transition:transform .4s ease;
+  }
+  .lock-wrap.unlocking .shackle{ transform:translateY(-14px) rotate(-25deg); transform-origin:left bottom; }
+  .body-box{
+    width:90px; height:64px; background:linear-gradient(160deg, var(--pink-3), var(--pink-deep));
+    border-radius:18px; position:absolute; bottom:0; box-shadow:0 8px 18px rgba(232,93,132,.35);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .body-box::after{ content:"♥"; color:#fff; font-size:26px; font-family:Arial, sans-serif; }
+  .dots{ display:flex; gap:12px; margin-bottom:34px; }
+  .dot{ width:16px; height:16px; border-radius:50%; border:2px solid var(--pink-deep); background:#fff; transition:background .15s ease, transform .15s ease; }
+  .dot.filled{ background:var(--pink-deep); transform:scale(1.08); }
+  .dots.shake{ animation:shake .4s ease; }
+  @keyframes shake{
+    0%,100%{transform:translateX(0);}
+    20%{transform:translateX(-8px);}
+    40%{transform:translateX(8px);}
+    60%{transform:translateX(-6px);}
+    80%{transform:translateX(6px);}
+  }
+  .keypad{ display:grid; grid-template-columns:repeat(3, 62px); gap:16px 22px; }
+  .key{
+    width:62px; height:62px; border-radius:50%; border:none; background:rgba(255,255,255,.55);
+    color:var(--ink); font-size:20px; font-family:Georgia, serif;
+    display:flex; align-items:center; justify-content:center; cursor:pointer;
+    transition:background .15s ease, transform .1s ease; -webkit-tap-highlight-color:transparent;
+  }
+  .key:active{ transform:scale(.92); background:rgba(255,255,255,.85); }
+  .key.func{ font-size:13px; font-family:Arial, sans-serif; color:#9a7684; }
+
+  /* ===== transition black screen ===== */
+  #blackScreen{
+    position:fixed; inset:0; background:#000;
+    display:flex; align-items:center; justify-content:center;
+    opacity:0; transition:opacity 1.2s ease; z-index:90; pointer-events:none;
+  }
+  #blackScreen.visible{ opacity:1; }
+
+  @media (prefers-reduced-motion: reduce){ *{animation:none !important; transition:none !important;} }
+</style>
+</head>
+<body>
+
+  <!-- ============ LOCK SCREEN ============ -->
+  <div id="blackScreen"></div>
+
+  <div id="lockScreen">
+    <div class="eyebrow">for my sayang</div>
+    <h1 class="title">This one's locked</h1>
+    <p class="subtitle">Masukkan kode 4 digit yang cuma kalian berdua tahu.</p>
+    <button class="hint" id="hintBtn">lihat petunjuk</button>
+
+    <div class="lock-wrap" id="lockIcon">
+      <div class="shackle"></div>
+      <div class="body-box"></div>
+    </div>
+
+    <div class="dots" id="dots">
+      <div class="dot"></div><div class="dot"></div><div class="dot"></div><div class="dot"></div>
+    </div>
+
+    <div class="keypad" id="keypad">
+      <button class="key" data-num="1">1</button>
+      <button class="key" data-num="2">2</button>
+      <button class="key" data-num="3">3</button>
+      <button class="key" data-num="4">4</button>
+      <button class="key" data-num="5">5</button>
+      <button class="key" data-num="6">6</button>
+      <button class="key" data-num="7">7</button>
+      <button class="key" data-num="8">8</button>
+      <button class="key" data-num="9">9</button>
+      <button class="key func" id="clearBtn">hapus</button>
+      <button class="key" data-num="0">0</button>
+      <button class="key func" id="backBtn">⌫</button>
+    </div>
+  </div>
+
+  <!-- ============ BIRTHDAY PAGE (revealed after unlock) ============ -->
+
+  <section id="hero">
+    <div class="frame">
+      <img src="foto1.jpg" alt="foto utama">
+    </div>
+    <audio id="bday-music" src="lagu.mp3" loop preload="auto"></audio>
+    <div id="hero-content">
+      <div class="label">for my Love</div>
+      <h1>Happy Birthday, Love</h1>
+      <p class="sub">setiap tahun bareng kamu terasa seperti hadiah</p>
+      <div class="scroll-cue">SCROLL</div>
+    </div>
+  </section>
+
+  <section id="note">
+    <div class="wrap">
+      <div class="photo">
+        <div class="frame">
+          <img src="foto2.jpg" alt="">
+        </div>
+      </div>
+      <div>
+        <div class="label">a little note</div>
+        <h2>To my Love,</h2>
+        <p>selamat bertambah usia sayang, semoga Allah selalu memberi kemudahan atas segala usahamu, semoga do'amu selalu terkabul satu persatu, semoga langkah kakimu selalu diringankan,</p>
+        <p>semoga pundakmu dikuatkan, semoga segala urusanmu di permudah, semoga hatimu selalu di lapangkan atas segala takdir yang diluar rencanamu,</p>
+        <p>dan semoga kamu selalu dikelilingi orang-orang baik dimanapun kamu berada, dan semoga selalu sayanggg</p>
+        <div class="signed">— dari aku, untuk kamu</div>
+      </div>
+    </div>
+  </section>
+
+  <section id="moments">
+    <div class="wrap">
+      <div class="head">
+        <div class="label">the moments</div>
+        <h2>How we happened</h2>
+      </div>
+
+      <div class="film-strip">
+        <div class="strip-item">
+          <div class="strip-frame"><img src="foto3.jpg" alt="foto saat pertama kali ketemu"></div>
+          <div class="strip-caption">
+            <div class="strip-desc">Another year of you, and I’m still grateful I get to know your heart.</div>
+          </div>
+        </div>
+        <div class="strip-item">
+          <div class="strip-frame"><img src="foto4.jpg" alt="foto momen bilang iya"></div>
+          <div class="strip-caption">
+            <div class="strip-desc">No matter how many birthdays come and go, I’ll always be happy that you were born.</div>
+          </div>
+        </div>
+        <div class="strip-item">
+          <div class="strip-frame"><img src="foto5.jpg" alt="foto liburan pertama"></div>
+          <div class="strip-caption">
+            <div class="strip-desc">Here’s to more memories, more laughter, and more days with you.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="gallery">
+    <div class="wrap">
+      <div class="head">
+        <div class="label">a few more</div>
+        <h2>Just us, being us</h2>
+      </div>
+      <div class="photo-wall">
+        <div class="wall-item">
+          <div class="frame"><img src="foto6.jpg" alt="foto yang bikin ketawa"></div>
+          <div class="wall-caption">yang paling sering bikin ketawa</div>
+        </div>
+        <div class="wall-item">
+          <div class="frame"><img src="foto7.jpg" alt="foto yang bikin tenang"></div>
+          <div class="wall-caption">yang paling bikin tenang</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="closing">
+    <div class="inner">
+      <div class="label">for my Love</div>
+      <h2>Makasih udah jadi rumah paling nyaman buat aku pulang.</h2>
+      <p>Selamat ulang tahun, sayang. Semoga tahun ini secantik kamu ngejalaninnya, dan semoga aku masih di sampingmu buat lihat itu semua terjadi.</p>
+      <div class="heart">♡</div>
+      <div class="date">dengan cinta, hari ini</div>
+    </div>
+  </section>
+
+<script>
+  // ---------- PIN lock logic ----------
+  const CORRECT_PIN = "0908";
+  let entered = "";
+
+  const dotsEl = document.getElementById('dots');
+  const dots = [...document.querySelectorAll('.dot')];
+  const lockScreen = document.getElementById('lockScreen');
+  const blackScreen = document.getElementById('blackScreen');
+  const lockIcon = document.getElementById('lockIcon');
+  const hintBtn = document.getElementById('hintBtn');
+  const birthdayMusic = document.getElementById('bday-music');
+
+  function renderDots(){
+    dots.forEach((d,i)=> d.classList.toggle('filled', i < entered.length));
+  }
+
+  function shakeAndReset(){
+    dotsEl.classList.add('shake');
+    setTimeout(()=>{
+      dotsEl.classList.remove('shake');
+      entered = "";
+      renderDots();
+    }, 400);
+  }
+
+  function revealBirthdayPage(){
+    document.body.classList.add('unlocked');
+    window.scrollTo(0,0);
+    setTimeout(()=>{
+      blackScreen.classList.remove('visible');
+    }, 900);
+  }
+
+  function unlock(){
+    lockIcon.classList.add('unlocking');
+    setTimeout(()=>{
+      lockScreen.classList.add('fading');
+      blackScreen.classList.add('visible');
+    }, 350);
+    setTimeout(()=>{
+      lockScreen.remove();
+      revealBirthdayPage();
+      // start music after the page is revealed
+      if(typeof birthdayMusic !== 'undefined' && birthdayMusic){
+        try{
+          birthdayMusic.currentTime = 0;
+          birthdayMusic.play().catch(()=>{});
+        }catch(e){}
+      }
+    }, 1600);
+  }
+
+  function tryUnlock(){
+    if(entered.length === 4){
+      if(entered === CORRECT_PIN){
+        unlock();
+      } else {
+        shakeAndReset();
+      }
+    }
+  }
+
+  document.getElementById('keypad').addEventListener('click', (e)=>{
+    const btn = e.target.closest('button');
+    if(!btn) return;
+    if(btn.id === 'clearBtn'){ entered = ""; renderDots(); return; }
+    if(btn.id === 'backBtn'){ entered = entered.slice(0,-1); renderDots(); return; }
+    if(btn.dataset.num !== undefined && entered.length < 4){
+      entered += btn.dataset.num;
+      renderDots();
+      if(entered.length === 4){ setTimeout(tryUnlock, 150); }
+    }
+  });
+
+  hintBtn.addEventListener('click', ()=>{
+    hintBtn.textContent = "tanggal spesial kita, format DDMM ✨";
+  });
+
+  window.addEventListener('keydown', (e)=>{
+    if(e.key >= '0' && e.key <= '9' && entered.length < 4){
+      entered += e.key;
+      renderDots();
+      if(entered.length === 4) setTimeout(tryUnlock, 150);
+    } else if(e.key === 'Backspace'){
+      entered = entered.slice(0,-1);
+      renderDots();
+    }
+  });
+
+  // NOTE: fade-in animations for moments & gallery are handled via
+  // CSS @keyframes fadeUp — no JS intersection observer needed.
+  // (Kept empty on purpose so the page stays clean.)
+</script>
+</body>
+</html>
